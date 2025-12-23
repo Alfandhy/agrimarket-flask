@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Buat Akun Baru</h2>
+        <div class="card p-4 shadow-sm">
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" required>
+                    <div class="form-text">Minimal 8 karakter, kombinasi huruf & angka.</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" name="role">
+                        <option value="penjual">Penjual (Seller)</option>
+                        <option value="admin">Admin (Master)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nomor WhatsApp (Aktif)</label>
+                    <input type="text" class="form-control" name="whatsapp_number" placeholder="Contoh: 081234567890"
+                        required>
+                    <div class="form-text">Nomor ini akan digunakan sebagai tujuan tombol "Beli Sekarang".</div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Buat Akun</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

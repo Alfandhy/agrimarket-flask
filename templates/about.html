@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-md-6">
+        <h1 class="display-3 fw-bold text-success mb-4">Healthy Lifestyle Starts Here</h1>
+        <p class="lead mb-4">We are committed to providing you with the freshest, organic, and locally sourced
+            agricultural products directly from farmers to your doorstep.</p>
+        <p>Our journey began with a simple mission: to empower local farmers and provide nutritious variety to families
+            across the nation.</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 mt-3">Shop Now</a>
+    </div>
+    <div class="col-md-6">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+            alt="About Us" class="img-fluid rounded-4 shadow-lg">
+    </div>
+</div>
+{% endblock %}

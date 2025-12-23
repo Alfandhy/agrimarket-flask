@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Tambah Produk Baru</h2>
+        <div class="card p-4">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="mb-3">
+                    <label class="form-label">Nama Produk</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select" name="category_id">
+                            <option value="" selected>-- Pilih Kategori --</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Harga (Rp)</label>
+                        <input type="number" class="form-control" name="price" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-control" name="description" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gambar Produk (Max 5)</label>
+                    <input type="file" class="form-control" name="images" multiple accept="image/*">
+                    <div class="form-text">Tekan CTR (Windows) atau CMD (Mac) untuk memilih banyak foto sekaligus.</div>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-dark">Simpan Produk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

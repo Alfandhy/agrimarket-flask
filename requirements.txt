@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+werkzeug
+email_validator
+Flask-Limiter
+Flask-WTF
+psycopg2-binary
+gunicorn

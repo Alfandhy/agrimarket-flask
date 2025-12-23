@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-10">
+        <div class="card shadow-sm border-0 bg-light">
+            <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+                    <!-- Profile Image -->
+                    <div style="width: 120px; height: 120px; flex-shrink: 0;" class="position-relative">
+                        {% if user.profile_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}"
+                            alt="{{ user.username }}" class="rounded-circle shadow w-100 h-100"
+                            style="object-fit: cover;">
+                        {% else %}
+                        <div
+                            class="w-100 h-100 rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white display-4 fw-bold">
+                            {{ user.username[0]|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Bio & Info -->
+                    <div class="text-center text-md-start flex-grow-1">
+                        <div
+                            class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
+                            <h2 class="mb-0 fw-bold">{{ user.username }}</h2>
+                            {% if user.is_verified %}
+                            <i class="bi bi-patch-check-fill text-primary h4 mb-0" title="Penjual Terverifikasi"></i>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted mb-2">
+                            {% if user.join_date %}
+                            Anggota sejak {{ user.join_date.strftime('%B %Y') }}
+                            {% else %}
+                            Anggota lama
+                            {% endif %}
+                        </p>
+                        {% if user.bio %}
+                        <p class="mb-3 lead text-dark" style="font-size: 1rem;">
+                            {{ user.bio }}
+                        </p>
+                        {% else %}
+                        <p class="mb-3 text-muted fst-italic">
+                            Belum ada bio.
+                        </p>
+                        {% endif %}
+
+                        <div class="d-flex gap-2 justify-content-center justify-content-md-start">
+                            <a href="https://wa.me/{{ user.whatsapp_number }}" target="_blank"
+                                class="btn btn-success rounded-pill px-4">
+                                <i class="bi bi-whatsapp"></i> Hubungi Penjual
+                            </a>
+                            {% if current_user.id == user.id %}
+                            <a href="{{ url_for('main.edit_my_profile') }}"
+                                class="btn btn-outline-secondary rounded-pill px-3">
+                                <i class="bi bi-pencil"></i> Edit Profil
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Stats Card -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center px-4">
+                            <h3 class="fw-bold mb-0 text-primary">{{ user.products|length }}</h3>
+                            <small class="text-muted">Produk Aktif</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-4 text-center text-md-start"><i class="bi bi-grid-fill me-2 text-primary"></i>Etalase Produk</h4>
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for product in user.products %}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 hover-lift">
+            <div class="card-img-wrapper position-relative" style="height: 200px; overflow: hidden;">
+                {% if product.images %}
+                <img src="{{ url_for('static', filename='uploads/' + product.images[0].image_filename) }}"
+                    class="card-img-top h-100" alt="{{ product.name }}"
+                    style="object-fit: cover; transition: transform 0.3s ease;">
+                {% else %}
+                <div class="bg-light text-center h-100 d-flex align-items-center justify-content-center text-muted">
+                    No Image
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                {% if product.category %}
+                <div class="mb-2">
+                    <span class="badge bg-light text-dark border">{{ product.category.name }}</span>
+                </div>
+                {% endif %}
+                <h6 class="card-title fw-bold text-truncate" title="{{ product.name }}">
+                    {{ product.name }}
+                </h6>
+                <p class="card-text text-success fw-bold">
+                    Rp {{ "{:,.0f}".format(product.price) }}
+                </p>
+                <a href="{{ url_for('product.product_detail', id=product.id) }}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 py-5 text-center text-muted">
+        <i class="bi bi-box-seam display-4 mb-3 d-block"></i>
+        <p>Penjual ini belum memiliki produk aktif.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+
+    .hover-lift:hover img {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

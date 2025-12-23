@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Edit User</h2>
+        <div class="card p-4 shadow-sm">
+            <div class="card p-4 shadow-sm">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                    {% if user.profile_image %}
+                    <div class="text-center mb-3">
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}"
+                            class="rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                    </div>
+                    {% endif %}
+
+                    {% if current_user.role == 'admin' %}
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Foto Profil (Opsional)</label>
+                        <input type="file" class="form-control" name="profile_image" accept="image/*">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Bio / Deskripsi Toko</label>
+                        <textarea class="form-control" name="bio" rows="3">{{ user.bio or '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nomor WhatsApp</label>
+                        <input type="text" class="form-control" name="whatsapp_number"
+                            value="{{ user.whatsapp_number }}" required>
+                        <div class="form-text">Pastikan aktif. Format otomatis diubah ke 62...</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password Baru (Opsional)</label>
+                        <input type="password" class="form-control" name="password"
+                            placeholder="Biarkan kosong jika tidak ingin mengubah password">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        {% if current_user.role == 'admin' %}
+                        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary">Batal</a>
+                        {% else %}
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Batal</a>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Edit Produk</h2>
+        <div class="card p-4">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="mb-3">
+                    <label class="form-label">Nama Produk</label>
+                    <input type="text" class="form-control" name="name" value="{{ product.name }}" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select" name="category_id">
+                            <option value="">-- Pilih Kategori --</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if product.category_id==cat.id %}selected{% endif %}>{{
+                                cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Harga (Rp)</label>
+                        <input type="number" class="form-control" name="price" value="{{ product.price }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-control" name="description" rows="4"
+                        required>{{ product.description }}</textarea>
+                </div>
+
+                <!-- Image Management -->
+                <div class="mb-4">
+                    <label class="form-label">Galeri Foto ({{ product.images|length }} / 5)</label>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        {% for img in product.images %}
+                        <div class="position-relative" style="width: 100px;">
+                            <img src="{{ url_for('static', filename='uploads/' + img.image_filename) }}"
+                                class="img-thumbnail w-100" style="height: 100px; object-fit: cover;">
+                            <button type="submit" formaction="{{ url_for('product.delete_product_image', img_id=img.id) }}"
+                                formmethod="POST"
+                                class="btn btn-danger btn-sm badge position-absolute top-0 end-0 rounded-circle p-1"
+                                style="transform: translate(30%, -30%);">x</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if product.images|length < 5 %} <label class="form-label mt-2">Tambah Foto Baru</label>
+                        <input type="file" class="form-control" name="images" multiple accept="image/*">
+                        <div class="form-text">Bisa pilih multiple (Sisa slot: {{ 5 - product.images|length }}).</div>
+                        {% else %}
+                        <div class="alert alert-warning py-2 text-center">
+                            <small>Maksimal 5 foto telah tercapai. Hapus beberapa untuk menambah baru.</small>
+                        </div>
+                        {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Update Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
