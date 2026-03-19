@@ -49,3 +49,22 @@ def create_app(config_class=Config):
         return response
 
     return app
+
+# Memberikan akses langsung untuk gunicorn jika menggunakan 'app:app'
+from app.models import User, Category
+
+def seed_data(app):
+    with app.app_context():
+        db.create_all()
+        if not User.query.filter_by(role='admin').first():
+            admin = User(username='admin', role='admin', whatsapp_number='6281234567890')
+            admin.set_password('admin123')
+            db.session.add(admin)
+        target_cats = ['Produk Pertanian', 'Komoditas Pertanian', 'Buah-Buahan', 'Sayur-Sayuran', 'Makanan']
+        for c_name in target_cats:
+            if not Category.query.filter_by(name=c_name).first():
+                db.session.add(Category(name=c_name))
+        db.session.commit()
+
+app = create_app()
+seed_data(app)
