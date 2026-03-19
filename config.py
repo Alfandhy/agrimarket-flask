@@ -4,12 +4,13 @@ import os
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev_key_very_secret_replace_in_prod')
     # Railway/Heroku provides 'postgres://' which is deprecated in SQLAlchemy 1.4+
-    db_url = os.environ.get('DATABASE_URL', 'postgresql://postgres:1q2w3e@localhost/marketplace')
+    db_url = os.environ.get('DATABASE_URL')
     if db_url and db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
     
     basedir = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'instance', 'marketplace.db'))
+    # Fallback to SQLite if DATABASE_URL is not set
+    SQLALCHEMY_DATABASE_URI = db_url or ('sqlite:///' + os.path.join(basedir, 'instance', 'marketplace.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
