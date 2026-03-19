@@ -26,10 +26,11 @@ def seed_data():
         
         db.session.commit()
 
+seed_data()
+
 if __name__ == '__main__':
     # Ensure upload folder exists (relative to where run.py is)
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
         
-    seed_data()
     app.run(debug=True)
