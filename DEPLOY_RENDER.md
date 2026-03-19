@@ -1,83 +1,69 @@
 ---
-description: Panduan Deployment ke Render.com
+description: Panduan Deployment ke Render.com (Tanpa Kartu Kredit)
 ---
 
-# Cara Upload Website ke Render.com (Gratis)
+# Cara Upload Website ke Render.com (Tanpa Kartu Kredit)
 
-Render.com adalah platform cloud modern yang sangat mudah digunakan. Ikuti langkah-langkah ini untuk mengonlinekan website Anda.
-
-## Persiapan 1: Masukkan Kode ke GitHub
-Render mengambil kode website Anda langsung dari GitHub. Jadi langkah pertama adalah mengamankan kode Anda di sana.
-
-1.  **Buat Akun GitHub** (jika belum punya) di [github.com](https://github.com).
-2.  **Buat Repository Baru**:
-    *   Klik tombol **+** di pojok kanan atas -> **New repository**.
-    *   Nama Repository: `agrimarket-flask` (atau nama lain yang Anda suka).
-    *   Pilih **Public** (atau Private, bebas).
-    *   **PENTING**: Jangan centang "Add README" atau "Add .gitignore" dulu agar repo tetap kosong. Klik **Create repository**.
-
-3.  **Upload Kode dari Komputer Anda** (Buka Terminal di VS Code):
-    Ketik perintah berikut satu per satu (tekan Enter setelah setiap baris):
-    ```bash
-    git init
-    git add .
-    git commit -m "Siap deploy ke Render"
-    git branch -M main
-    # Ganti URL di bawah dengan URL repository Anda sendiri (dari langkah 2)
-    git remote add origin https://github.com/USERNAME_ANDA/NAMA_REPO.git
-    git push -u origin main
-    ```
-    *(Jika diminta login, ikuti instruksi yang muncul di layar)*.
+Karena Render meminta kartu kredit untuk membuat database PostgreSQL, kita akan menggunakan **trik kombinasi**:
+1.  **Aplikasi** dihosting di **Render** (Gratis).
+2.  **Database** dihosting di **Neon.tech** atau **Supabase** (Gratis & Tanpa Kartu Kredit).
 
 ---
 
-## Persiapan 2: Setup Database PostgreSQL (Gratis di Render)
-Kita butuh database online yang kuat.
+## Langkah 1: Persiapan GitHub (Sudah Anda Lakukan ✅)
+Kode Anda sudah ada di GitHub, jadi kita bisa lanjut ke langkah berikutnya.
+
+---
+
+## Langkah 2: Buat Database Gratis di Neon.tech
+Neon adalah penyedia database PostgreSQL gratis yang sangat populer dan tidak meminta kartu kredit.
+
+1.  Buka [neon.tech](https://neon.tech) dan klik **Sign Up**.
+2.  Login menggunakan akun **Google** atau **GitHub** Anda.
+3.  Buat Project baru:
+    *   **Project Name**: `agrimarket-db`
+    *   **Postgres Version**: Pilih yang terbaru (misal: 16).
+    *   **Region**: Singapore (aws-ap-southeast-1) - *Agar website cepat*.
+    *   Klik **Create Project**.
+4.  Setelah selesai, Anda akan melihat **Connection String** (URL).
+5.  Pastikan pilih format **Postgres** (bukan *Poooled* untuk awal, atau *Direct* juga boleh).
+6.  Klik tombol "Copy" untuk menyalin URL tersebut.
+    *   Bentuknya seperti: `postgresql://neondb_owner:npg_ad8...2@ep-cool-....neon.tech/neondb?sslmode=require`
+    *   **Simpan URL ini**, kita butuh di langkah selanjutnya.
+
+---
+
+## Langkah 3: Deploy Aplikasi di Render
 
 1.  Login ke [dashboard.render.com](https://dashboard.render.com).
-2.  Klik tombol **New +** -> pilih **PostgreSQL**.
-3.  Isi data:
-    *   **Name**: `agrimarket-db`
-    *   **Region**: Singapore (paling dekat dengan Indonesia).
-    *   **PostgreSQL Version**: Pilih yang terbaru (default).
-    *   **Instance Type**: Free (Gratis).
-4.  Klik **Create Database**.
-5.  Tunggu sampai statusnya "Available".
-6.  Scroll ke bawah, cari bagian **Connections**.
-7.  Copy **Internal Database URL** (kita akan butuh ini nanti).
-
----
-
-## Langkah 3: Deploy Website (Web Service)
-
-1.  Kembali ke Dashboard, klik **New +** -> pilih **Web Service**.
-2.  Pilih **Build and deploy from a Git repository**.
-3.  Cari repository Anda yang tadi dibuat, klik **Connect**.
-4.  Isi konfigurasi:
+2.  Klik tombol **New +** -> pilih **Web Service**.
+3.  Pilih **Build and deploy from a Git repository**.
+4.  Cari repository `agrimarket-flask` Anda, klik **Connect**.
+5.  Isi konfigurasi dasar:
     *   **Name**: `agrimarket-app`
-    *   **Region**: Singapore (samakan dengan database).
+    *   **Region**: Singapore (Sesuaikan dengan lokasi database Neon tadi agar cepat).
     *   **Branch**: `main`
     *   **Runtime**: Python 3
     *   **Build Command**: `pip install -r requirements.txt`
-    *   **Start Command**: `gunicorn app:app` (Render biasanya otomatis mengisi ini, tapi pastikan isinya benar).
-5.  **PENTING: Environment Variables**
-    Scroll ke bawah ke bagian "Environment Variables", klik **Add Environment Variable**. Tambahkan kunci dan nilai berikut:
+    *   **Start Command**: `gunicorn app:app`
+    *   **Plan**: Free
+6.  **PENTING: Environment Variables**
+    Scroll ke bawah, klik **Add Environment Variable** dan isi dua data ini:
 
     | Key | Value |
     | :--- | :--- |
-    | `PYTHON_VERSION` | `3.10.0` (atau `3.9.0`) |
-    | `SECRET_KEY` | Isi dengan text acak yang panjang & rahasia (contoh: `kjsd7823hkjsdf8723`) |
-    | `DATABASE_URL` | Paste **Internal Database URL** yang Anda copy dari langkah Database tadi. |
-    | `Multi_Line_Input` | (Kosongkan/Tidak perlu) |
+    | `DATABASE_URL` | **Paste URL dari Neon.tech tadi di sini** |
+    | `SECRET_KEY` | Isi dengan sembarang teks acak panjang (contoh: `kjsd7823hkjsdf8723`) |
+    | `PYTHON_VERSION` | `3.10.0` |
 
-6.  Pastikan pilih **Free Plan**.
 7.  Klik **Create Web Service**.
 
 ---
 
 ## Selesai!
 
-Render akan mulai memproses ("Building"). Tunggu sekitar 2-5 menit.
-Jika berhasil, Anda akan melihat status **Live** berwarna hijau dan link website Anda (contoh: `https://agrimarket-app.onrender.com`) di bagian atas.
+Render akan mulai memproses. Tunggu 2-5 menit.
+Jika berhasil, status akan menjadi **Live** (Hijau). Coba buka link website Anda.
 
-Klik link tersebut, dan website Anda sudah online! 🎉
+### Catatan:
+Data pengguna dan produk Anda sekarang tersimpan aman di Neon.tech clouds, bukan di file komputer Anda lagi.

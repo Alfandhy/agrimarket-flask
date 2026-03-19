@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.orm import joinedload
 from app.models import Product, Category, Banner, User, db
 from app.routes.auth import validate_password_strength, format_whatsapp # Reuse helpers
+from app.utils import upload_image, delete_image
 
 bp = Blueprint('main', __name__)
 
@@ -80,17 +81,14 @@ def edit_my_profile():
                 filename = secure_filename(file.filename)
                 ext = os.path.splitext(filename)[1]
                 
-                # Basic check for profile image too
-                if ext.lower() in current_app.config['ALLOWED_EXTENSIONS']:
-                     unique_filename = f"profile_{user.id}_{uuid.uuid4().hex}{ext}"
-                     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
-                     file.save(file_path)
-                     
+                # Use helper for upload
+                new_filename = upload_image(file, folder="profiles")
+                if new_filename:
+                     # Delete old image if exists
                      if user.profile_image:
-                         try: os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], user.profile_image))
-                         except: pass
+                         delete_image(user.profile_image)
                          
-                     user.profile_image = unique_filename
+                     user.profile_image = new_filename
         
         new_pass = request.form.get('password')
         if new_pass:

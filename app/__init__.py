@@ -1,5 +1,9 @@
 
 from flask import Flask, render_template, flash, redirect, url_for
+from dotenv import load_dotenv
+
+load_dotenv() # Load env vars from .env if present
+
 from config import Config
 from app.extensions import db, login_manager, csrf, limiter
 from app.models import User

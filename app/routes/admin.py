@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.orm import joinedload
 from app.models import User, Category, Banner, Product, db
 from app.routes.auth import validate_password_strength, format_whatsapp # Reuse helpers
+from app.utils import upload_image, delete_image
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -130,15 +131,11 @@ def manage_banners():
         if 'image' in request.files:
             file = request.files['image']
             if file and file.filename != '':
-                filename = secure_filename(file.filename)
-                ext = os.path.splitext(filename)[1]
-                if ext.lower() not in {'.jpg', '.jpeg', '.png', '.webp'}:
-                     flash('Format file tidak didukung', 'danger')
+                # UPLOAD HELPER
+                unique_filename = upload_image(file, folder="banners")
+                if not unique_filename:
+                     flash('Gagal mengupload gambar atau format salah.', 'danger')
                      return redirect(url_for('admin.manage_banners'))
-
-                unique_filename = f"banner_{uuid.uuid4().hex}{ext}"
-                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
-                file.save(file_path)
                 
                 new_banner = Banner(title=title, subtitle=subtitle, image_filename=unique_filename)
                 db.session.add(new_banner)
@@ -156,7 +153,7 @@ def delete_banner(id):
     if current_user.role != 'admin': abort(403)
     banner = Banner.query.get_or_404(id)
     try:
-        os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], banner.image_filename))
+        delete_image(banner.image_filename)
     except:
         pass
     db.session.delete(banner)
@@ -172,8 +169,3 @@ def toggle_banner(id):
     banner.is_active = not banner.is_active
     db.session.commit()
     return redirect(url_for('admin.manage_banners'))
-
-    banner.is_active = not banner.is_active
-    db.session.commit()
-    return redirect(url_for('admin.manage_banners'))
-

@@ -38,18 +38,25 @@ class Product(db.Model):
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     images = db.relationship('ProductImage', backref='product', cascade='all, delete-orphan', lazy=True)
 
+    __table_args__ = (
+        db.Index('idx_product_seller', 'seller_id'),
+        db.Index('idx_product_category', 'category_id'),
+        db.Index('idx_product_price', 'price'),
+    )
+
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image_filename = db.Column(db.String(150), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
+    __table_args__ = (
+        db.Index('idx_image_product', 'product_id'),
+    )
+
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     subtitle = db.Column(db.String(100), nullable=True)
-    image_filename = db.Column(db.String(150), nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
-
     image_filename = db.Column(db.String(150), nullable=False)
     is_active = db.Column(db.Boolean, default=True)
 

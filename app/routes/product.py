@@ -13,6 +13,8 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
+from app.utils import upload_image, delete_image
+
 def save_product_images(files, product_id):
     """Save images with transaction safety."""
     count_existing = ProductImage.query.filter_by(product_id=product_id).count()
@@ -21,35 +23,33 @@ def save_product_images(files, product_id):
     if allowed_slots <= 0 or not files:
         return
 
-    saved_images = []
+    saved_images = [] # keep track for potential rollback (local only)
+    
+    # NOTE: With cloud storage, rollback is harder (need to delete remote). 
+    # For now we assume success or handle cleanup simply.
+    
     try:
         for file in files:
             if file.filename == '' or allowed_slots <= 0:
                 continue
             
-            if not allowed_file(file.filename):
+            # Using helper
+            filename = upload_image(file, folder="products")
+            if not filename:
                 continue
                 
-            filename = secure_filename(file.filename)
-            ext = os.path.splitext(filename)[1]
-            unique_filename = f"{uuid.uuid4().hex}{ext}"
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            saved_images.append(filename)
             
-            file.save(file_path)
-            saved_images.append(unique_filename)
-            
-            new_img = ProductImage(image_filename=unique_filename, product_id=product_id)
+            new_img = ProductImage(image_filename=filename, product_id=product_id)
             db.session.add(new_img)
             allowed_slots -= 1
             
         db.session.commit()
     except Exception as e:
         db.session.rollback()
+        # Basic cleanup for local files
         for f in saved_images:
-            try:
-                os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], f))
-            except:
-                pass
+            delete_image(f)
         raise e 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -104,7 +104,7 @@ def delete_product_image(img_id):
     if current_user.role != 'admin' and img.product.seller_id != current_user.id: abort(403)
     
     try:
-        os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], img.image_filename))
+        delete_image(img.image_filename)
     except (FileNotFoundError, TypeError):
         pass
         
@@ -119,7 +119,7 @@ def delete_product(id):
     if current_user.role != 'admin' and product.seller_id != current_user.id: abort(403)
     
     for img in product.images:
-        try: os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], img.image_filename))
+        try: delete_image(img.image_filename)
         except: pass
         
     db.session.delete(product)
