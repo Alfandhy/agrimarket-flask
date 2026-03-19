@@ -89,6 +89,10 @@
                     No Image
                 </div>
                 {% endif %}
+                <!-- Stock Badge -->
+                <span class="position-absolute top-0 end-0 m-2 badge {{ 'bg-success' if product.stock > 0 else 'bg-danger' }} shadow-sm">
+                    Stok: {{ product.stock if product.stock > 0 else 'Habis' }}
+                </span>
             </div>
 
             <div class="card-body">

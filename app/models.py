@@ -34,6 +34,7 @@ class Product(db.Model):
     name = db.Column(db.String(150), nullable=False, index=True)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    stock = db.Column(db.Integer, nullable=False, default=1)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     images = db.relationship('ProductImage', backref='product', cascade='all, delete-orphan', lazy=True)

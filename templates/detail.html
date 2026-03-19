@@ -53,6 +53,12 @@
         {% endif %}
         <h1 class="display-5 fw-bold">{{ product.name }}</h1>
         <h3 class="text-success my-3">Rp {{ "{:,.0f}".format(product.price) }}</h3>
+        
+        <div class="mb-3">
+            <span class="badge {{ 'bg-success' if product.stock > 0 else 'bg-danger' }}">
+                Stok: {{ product.stock if product.stock > 0 else 'Kosong' }}
+            </span>
+        </div>
 
         <div class="mb-3">
             <small class="text-muted">Dijual oleh:</small>

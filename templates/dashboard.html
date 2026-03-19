@@ -28,6 +28,7 @@
                     <th>Nama Produk</th>
                     <th>Kategori</th>
                     <th>Harga</th>
+                    <th>Stok</th>
                     {% if current_user.role == 'admin' %}
                     <th>Penjual</th>
                     {% endif %}
@@ -55,6 +56,11 @@
                         {% endif %}
                     </td>
                     <td>Rp {{ "{:,.0f}".format(product.price) }}</td>
+                    <td>
+                        <span class="badge {{ 'bg-success' if product.stock > 0 else 'bg-danger' }}">
+                            {{ product.stock }}
+                        </span>
+                    </td>
                     {% if current_user.role == 'admin' %}
                     <td>
                         <small class="text-muted">{{ product.seller.username }}</small>
@@ -74,7 +80,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="{{ 6 if current_user.role == 'admin' else 5 }}" class="text-center py-5">
+                    <td colspan="{{ 7 if current_user.role == 'admin' else 6 }}" class="text-center py-5">
                         <div class="text-muted mb-2">Belum ada produk.</div>
                         <a href="{{ url_for('product.create_product') }}" class="btn btn-sm btn-primary">Mulai Jualan</a>
                     </td>

@@ -62,6 +62,7 @@ def create_product():
                 name=request.form.get('name'), 
                 description=request.form.get('description'), 
                 price=int(request.form.get('price')), 
+                stock=int(request.form.get('stock', 1)),
                 category_id=request.form.get('category_id') or None,
                 seller_id=current_user.id 
             )
@@ -72,7 +73,7 @@ def create_product():
             flash('Produk berhasil ditambahkan!', 'success')
             return redirect(url_for('main.dashboard'))
         except ValueError:
-            flash('Harga harus berupa angka.', 'warning')
+            flash('Harga dan stok harus berupa angka.', 'warning')
         except Exception as e:
             flash(f'Terjadi kesalahan saat menyimpan produk: {e}', 'danger')
             
@@ -89,6 +90,7 @@ def edit_product(id):
         product.name = request.form.get('name')
         product.description = request.form.get('description')
         product.price = int(request.form.get('price'))
+        product.stock = int(request.form.get('stock', product.stock))
         product.category_id = request.form.get('category_id')
         
         save_product_images(request.files.getlist('images'), product.id)
