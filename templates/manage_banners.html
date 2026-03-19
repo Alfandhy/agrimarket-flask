@@ -13,7 +13,7 @@
             {% for banner in banners %}
             <div class="col">
                 <div class="card h-100 shadow-sm border-0">
-                    <img src="{{ url_for('static', filename='uploads/' + banner.image_filename) }}" class="card-img-top"
+                    <img src="{{ get_image_url(banner.image_filename) }}" class="card-img-top"
                         alt="Banner" style="height: 180px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title fw-bold">{{ banner.title }}</h5>

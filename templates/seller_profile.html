@@ -9,7 +9,7 @@
                     <!-- Profile Image -->
                     <div style="width: 120px; height: 120px; flex-shrink: 0;" class="position-relative">
                         {% if user.profile_image %}
-                        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}"
+                        <img src="{{ get_image_url(user.profile_image) }}"
                             alt="{{ user.username }}" class="rounded-circle shadow w-100 h-100"
                             style="object-fit: cover;">
                         {% else %}
@@ -81,7 +81,7 @@
         <div class="card h-100 shadow-sm border-0 hover-lift">
             <div class="card-img-wrapper position-relative" style="height: 200px; overflow: hidden;">
                 {% if product.images %}
-                <img src="{{ url_for('static', filename='uploads/' + product.images[0].image_filename) }}"
+                <img src="{{ get_image_url(product.images[0].image_filename) }}"
                     class="card-img-top h-100" alt="{{ product.name }}"
                     style="object-fit: cover; transition: transform 0.3s ease;">
                 {% else %}

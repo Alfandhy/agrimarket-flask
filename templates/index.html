@@ -14,7 +14,7 @@
         {% for b in banners %}
         <div class="carousel-item {{ 'active' if loop.first }}">
             <div class="position-relative">
-                <img src="{{ url_for('static', filename='uploads/' + b.image_filename) }}" class="d-block w-100"
+                <img src="{{ get_image_url(b.image_filename) }}" class="d-block w-100"
                     alt="{{ b.title }}" style="height: 500px; object-fit: cover;">
                 <div class="carousel-caption d-none d-md-block text-start p-5"
                     style="top: 0; bottom: 0; left: 0; right: 0; background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 60%); display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start;">
@@ -138,7 +138,7 @@
         <div class="card h-100 border-0 shadow-sm hover-lift bg-white">
             <div class="position-relative" style="height: 250px; overflow: hidden;">
                 {% if product.main_image %}
-                <img src="{{ url_for('static', filename='uploads/' + product.main_image) }}" class="card-img-top h-100"
+                <img src="{{ get_image_url(product.main_image) }}" class="card-img-top h-100"
                     alt="{{ product.name }}" style="object-fit: cover;">
                 {% else %}
                 <div class="h-100 bg-light d-flex align-items-center justify-content-center text-muted">

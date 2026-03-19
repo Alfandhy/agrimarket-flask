@@ -15,7 +15,7 @@
             <div class="carousel-inner">
                 {% for img in product.images %}
                 <div class="carousel-item {{ 'active' if loop.first }}">
-                    <img src="{{ url_for('static', filename='uploads/' + img.image_filename) }}" class="d-block w-100"
+                    <img src="{{ get_image_url(img.image_filename) }}" class="d-block w-100"
                         alt="{{ product.name }}" style="height: 400px; object-fit: cover;">
                 </div>
                 {% endfor %}
@@ -36,7 +36,7 @@
         {% if product.images|length > 1 %}
         <div class="d-flex gap-2 mt-2">
             {% for img in product.images %}
-            <img src="{{ url_for('static', filename='uploads/' + img.image_filename) }}" class="img-thumbnail"
+            <img src="{{ get_image_url(img.image_filename) }}" class="img-thumbnail"
                 style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;"
                 onclick="document.querySelector('[data-bs-slide-to=\'{{ loop.index0 }}\']').click()">
             {% endfor %}
@@ -58,7 +58,7 @@
             <small class="text-muted">Dijual oleh:</small>
             <div class="d-flex align-items-center gap-2 mt-1">
                 {% if product.seller.profile_image %}
-                <img src="{{ url_for('static', filename='uploads/' + product.seller.profile_image) }}"
+                <img src="{{ get_image_url(product.seller.profile_image) }}"
                     class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
                 {% else %}
                 <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white small"
@@ -103,7 +103,7 @@
         <div class="col">
             <div class="card h-100 border-0 shadow-sm">
                 {% if rec.main_image %}
-                <img src="{{ url_for('static', filename='uploads/' + rec.main_image) }}" class="card-img-top"
+                <img src="{{ get_image_url(rec.main_image) }}" class="card-img-top"
                     alt="{{ rec.name }}" style="height: 150px; object-fit: cover;">
                 {% else %}
                 <div class="bg-light text-center py-5" style="height: 150px;">No Image</div>

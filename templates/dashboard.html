@@ -39,7 +39,7 @@
                 <tr>
                     <td style="width: 80px;">
                         {% if product.main_image %}
-                        <img src="{{ url_for('static', filename='uploads/' + product.main_image) }}" alt="img"
+                        <img src="{{ get_image_url(product.main_image) }}" alt="img"
                             class="rounded" style="height: 50px; width: 50px; object-fit: cover;">
                         {% else %}
                         <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted"

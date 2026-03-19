@@ -92,11 +92,22 @@ Sekarang Anda berada di halaman konfigurasi Web. Scroll ke bawah.
 ---
 
 ## Langkah 5: Selesai!
-1.  Kembali ke tab **Web**.
-2.  Klik tombol hijau besar **Reload <username>.pythonanywhere.com**.
-3.  Klik link website Anda di bagian atas (contoh: `https://alfandhy.pythonanywhere.com`).
-
 Website Anda sudah online! 🎉
+
+---
+
+## Langkah 6: Konfigurasi Gambar (Agar Muncul)
+Di PythonAnywhere, gambar tidak akan muncul otomatis sebelum Anda mendaftarkan folder `static`.
+
+1.  Kembali ke tab **Web**.
+2.  Scroll ke bawah sampai bagian **Static files**.
+3.  Klik **Add a new entry**.
+4.  Isi kolom **URL** dengan: `/static/`
+5.  Isi kolom **Directory** dengan path lengkap folder static Anda: `/home/USERNAME_ANDA/mysite/static`
+6.  Klik tanda centang ✅.
+7.  Scroll ke atas lagi dan klik **Reload <username>.pythonanywhere.com**.
+
+Sekarang gambar yang Anda upload pasti akan tampil!
 
 ### Catatan Tambahan:
 *   Karena pakai SQLite, data produk/user yang Anda input di Localhost **tidak ikut terbawa**. Website dimulai dari kosong (fresh).

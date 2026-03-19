@@ -11,6 +11,17 @@ from app.models import User
 def create_app(config_class=Config):
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
     app.config.from_object(config_class)
+    
+    # Register global functions for templates
+    @app.context_processor
+    def utility_processor():
+        def get_image_url(filename):
+            if not filename:
+                return None
+            if filename.startswith('http'):
+                return filename
+            return url_for('static', filename='uploads/' + filename)
+        return dict(get_image_url=get_image_url)
 
     # Initialize extensions
     db.init_app(app)
