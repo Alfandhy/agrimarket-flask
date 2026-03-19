@@ -22,7 +22,8 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        # Use session.get for SQLAlchemy 2.0 compatibility
+        return db.session.get(User, int(user_id))
 
     # Register blueprints
     from app.routes import auth, admin, product, main
@@ -54,17 +55,22 @@ def create_app(config_class=Config):
 from app.models import User, Category
 
 def seed_data(app):
-    with app.app_context():
-        db.create_all()
-        if not User.query.filter_by(role='admin').first():
-            admin = User(username='admin', role='admin', whatsapp_number='6281234567890')
-            admin.set_password('admin123')
-            db.session.add(admin)
-        target_cats = ['Produk Pertanian', 'Komoditas Pertanian', 'Buah-Buahan', 'Sayur-Sayuran', 'Makanan']
-        for c_name in target_cats:
-            if not Category.query.filter_by(name=c_name).first():
-                db.session.add(Category(name=c_name))
-        db.session.commit()
+    try:
+        with app.app_context():
+            db.create_all()
+            if not User.query.filter_by(role='admin').first():
+                admin = User(username='admin', role='admin', whatsapp_number='6281234567890')
+                admin.set_password('admin123')
+                db.session.add(admin)
+            target_cats = ['Produk Pertanian', 'Komoditas Pertanian', 'Buah-Buahan', 'Sayur-Sayuran', 'Makanan']
+            for c_name in target_cats:
+                if not Category.query.filter_by(name=c_name).first():
+                    db.session.add(Category(name=c_name))
+            db.session.commit()
+    except Exception as e:
+        print(f"Warning: Seed data failed or already handled by another worker: {e}")
+        # Dont crash the app/worker just because seed/create_all failed
+        # Usually it means the DB is already set up or being set up by another worker.
 
 app = create_app()
 seed_data(app)

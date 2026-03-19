@@ -29,7 +29,7 @@ def index():
         query = query.filter(Product.name.contains(search_query) | Product.description.contains(search_query))
     elif category_id:
         query = query.filter_by(category_id=category_id)
-        current_category = Category.query.get(category_id)
+        current_category = db.session.get(Category, category_id)
         
     products = query.all()
     
