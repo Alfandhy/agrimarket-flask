@@ -108,16 +108,14 @@
             </div>
         </form>
 
-        <div class="d-flex justify-content-center flex-wrap gap-2">
-            <a href="{{ url_for('main.index') }}"
-                class="btn {{ 'btn-success text-white' if not current_category and not search_query else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm">
+        <div class="d-flex justify-content-center flex-wrap gap-2" id="category-filters">
+            <button class="btn {{ 'btn-success text-white' if not current_category and not search_query else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm category-btn" data-filter="all">
                 All Collection
-            </a>
+            </button>
             {% for cat in categories %}
-            <a href="{{ url_for('main.index', category=cat.id) }}"
-                class="btn {{ 'btn-success text-white' if current_category and current_category.id == cat.id else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm">
+            <button class="btn {{ 'btn-success text-white' if current_category and current_category.id == cat.id else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm category-btn" data-filter="{{ cat.id }}">
                 {{ cat.name }}
-            </a>
+            </button>
             {% endfor %}
         </div>
     </div>
@@ -134,7 +132,7 @@
 <!-- Product Grid -->
 <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
     {% for product in products %}
-    <div class="col">
+    <div class="col product-item" data-category="{{ product.category.id if product.category else '' }}">
         <div class="card h-100 border-0 shadow-sm hover-lift bg-white">
             <div class="position-relative" style="height: 250px; overflow: hidden;">
                 {% if product.main_image %}
@@ -195,6 +193,36 @@
     </div>
     {% endfor %}
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const filterBtns = document.querySelectorAll('.category-btn');
+    const productItems = document.querySelectorAll('.product-item');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Update button styles
+            filterBtns.forEach(b => {
+                b.classList.remove('btn-success', 'text-white');
+                b.classList.add('btn-outline-success', 'bg-white');
+            });
+            this.classList.remove('btn-outline-success', 'bg-white');
+            this.classList.add('btn-success', 'text-white');
+
+            // Filter products
+            const filter = this.getAttribute('data-filter');
+            productItems.forEach(item => {
+                if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
 
 <style>
     .hover-lift {
