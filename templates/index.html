@@ -18,14 +18,14 @@
                     alt="{{ b.title }}" style="height: 500px; object-fit: cover;">
                 <div class="carousel-caption d-none d-md-block text-start p-5"
                     style="top: 0; bottom: 0; left: 0; right: 0; background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 60%); display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start;">
-                    <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">100% Organic Products</span>
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">100% Produk Organik</span>
                     <h1 class="display-3 fw-bold text-white mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">{{
                         b.title }}</h1>
                     {% if b.subtitle %}
                     <p class="lead text-white mb-4" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">{{ b.subtitle }}
                     </p>
                     {% endif %}
-                    <a href="#shop-section" class="btn btn-primary btn-lg rounded-pill px-5">Shop Now</a>
+                    <a href="#shop-section" class="btn btn-primary btn-lg rounded-pill px-5">Belanja Sekarang</a>
                 </div>
             </div>
         </div>
@@ -45,8 +45,8 @@
 <div class="p-5 p-md-5 mb-5 rounded-4 text-bg-dark"
     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;">
     <div class="col-md-6 px-0 py-5">
-        <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">Welcome to AgriMarket</span>
-        <h1 class="display-3 fw-bold">Fresh & Organic From Farm</h1>
+        <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">Selamat Datang di AgriMarket</span>
+        <h1 class="display-3 fw-bold">Segar & Organik dari Petani</h1>
         <p class="lead my-3">Temukan produk pertanian terbaik langsung dari petani lokal di sekitar Anda dengan harga
             terbaik.</p>
         <a href="#shop-section" class="btn btn-primary btn-lg rounded-pill px-5">Mulai Belanja</a>
@@ -60,32 +60,32 @@
         <div
             class="p-3 border rounded-3 bg-white h-100 shadow-sm align-items-center d-flex flex-column justify-content-center">
             <i class="bi bi-truck fs-1 text-success mb-2"></i>
-            <h6 class="fw-bold">Free Shipping</h6>
-            <small class="text-muted">On order over Rp 500k</small>
+            <h6 class="fw-bold">Gratis Ongkir</h6>
+            <small class="text-muted">Untuk pesanan di atas Rp 500rb</small>
         </div>
     </div>
     <div class="col-md-3">
         <div
             class="p-3 border rounded-3 bg-white h-100 shadow-sm align-items-center d-flex flex-column justify-content-center">
             <i class="bi bi-shield-check fs-1 text-success mb-2"></i>
-            <h6 class="fw-bold">Secure Payment</h6>
-            <small class="text-muted">100% Secure payment</small>
+            <h6 class="fw-bold">Pembayaran Aman</h6>
+            <small class="text-muted">Pembayaran 100% aman</small>
         </div>
     </div>
     <div class="col-md-3">
         <div
             class="p-3 border rounded-3 bg-white h-100 shadow-sm align-items-center d-flex flex-column justify-content-center">
             <i class="bi bi-award fs-1 text-success mb-2"></i>
-            <h6 class="fw-bold">Quality Guarantee</h6>
-            <small class="text-muted">Direct from farmers</small>
+            <h6 class="fw-bold">Jaminan Kualitas</h6>
+            <small class="text-muted">Langsung dari petani</small>
         </div>
     </div>
     <div class="col-md-3">
         <div
             class="p-3 border rounded-3 bg-white h-100 shadow-sm align-items-center d-flex flex-column justify-content-center">
             <i class="bi bi-headset fs-1 text-success mb-2"></i>
-            <h6 class="fw-bold">24/7 Support</h6>
-            <small class="text-muted">Dedicated support</small>
+            <h6 class="fw-bold">Dukungan 24/7</h6>
+            <small class="text-muted">Dukungan khusus pelanggan</small>
         </div>
     </div>
 </div>
@@ -94,14 +94,14 @@
 <div id="shop-section" class="row justify-content-center mb-5">
     <div class="col-md-8">
         <div class="text-center mb-4">
-            <h2 class="fw-bold display-6">Our Products</h2>
+            <h2 class="fw-bold display-6">Produk Kami</h2>
             <p class="text-muted">Pilih kategori atau cari produk favoritmu</p>
         </div>
 
         <form action="{{ url_for('main.index') }}" method="get" class="mb-4">
             <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden">
                 <input type="search" name="search" class="form-control border-0 ps-4"
-                    placeholder="Search for vegetables, fruits..." value="{{ request.args.get('search', '') }}">
+                    placeholder="Cari sayuran, buah..." value="{{ request.args.get('search', '') }}">
                 <button class="btn btn-primary px-4 fw-bold" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
@@ -110,7 +110,7 @@
 
         <div class="d-flex justify-content-center flex-wrap gap-2" id="category-filters">
             <button class="btn {{ 'btn-success text-white' if not current_category and not search_query else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm category-btn" data-filter="all">
-                All Collection
+                Semua Koleksi
             </button>
             {% for cat in categories %}
             <button class="btn {{ 'btn-success text-white' if current_category and current_category.id == cat.id else 'btn-outline-success bg-white' }} rounded-pill px-4 border-0 shadow-sm category-btn" data-filter="{{ cat.id }}">
@@ -124,8 +124,8 @@
 <!-- Search Status -->
 {% if search_query %}
 <div class="alert alert-info text-center border-0 shadow-sm mb-4">
-    Search results for: <strong>"{{ search_query }}"</strong>
-    <a href="{{ url_for('main.index') }}" class="ms-2 small text-decoration-none fw-bold">Clear</a>
+    Hasil pencarian untuk: <strong>"{{ search_query }}"</strong>
+    <a href="{{ url_for('main.index') }}" class="ms-2 small text-decoration-none fw-bold">Hapus</a>
 </div>
 {% endif %}
 
@@ -180,7 +180,7 @@
 
                 <a href="{{ url_for('product.product_detail', id=product.id) }}"
                     class="btn btn-outline-success rounded-pill w-100 fw-bold">
-                    View Details
+                    Lihat Detail
                 </a>
             </div>
         </div>
@@ -188,8 +188,8 @@
     {% else %}
     <div class="col-12 text-center py-5 text-muted">
         <i class="bi bi-basket3 display-1 mb-3 text-secondary opacity-50"></i>
-        <h3>No Products Found</h3>
-        <p>Try clearing filters or search for something else.</p>
+        <h3>Tidak Ada Produk</h3>
+        <p>Coba hapus filter atau cari produk lain.</p>
     </div>
     {% endfor %}
 </div>
