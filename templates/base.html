@@ -87,8 +87,8 @@
     <div class="bg-dark text-white py-1 small">
         <div class="container d-flex justify-content-between align-items-center">
             <div><i class="bi bi-telephone-fill me-2"></i> +62 812 3456 7890</div>
-            <div>Take care of your health with 20% OFF code "DOFIX03"</div>
-            <div>USD <i class="bi bi-chevron-down"></i> &nbsp; English <i class="bi bi-chevron-down"></i></div>
+            <div>Jaga kesehatan Anda dengan DISKON 20% kode "DOFIX03"</div>
+            <div>IDR <i class="bi bi-chevron-down"></i> &nbsp; Indonesia <i class="bi bi-chevron-down"></i></div>
         </div>
     </div>
 
@@ -102,19 +102,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">Tentang Kami</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Shop</a>
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Belanja</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.index') }}">All Products</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.index') }}">Semua Produk</a></li>
                             <!-- Dynamic Categories could go here if injected globally, for now static link to index -->
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contact') }}">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contact') }}">Kontak</a></li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dasbor</a>
                     </li>
                     {% if current_user.role == 'admin' %}
                     <li class="nav-item dropdown">
@@ -128,7 +128,7 @@
                     </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Logout</a>
+                        <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Keluar</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -153,16 +153,16 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                             <li><a class="dropdown-item" href="{{ url_for('main.dashboard') }}"><i
-                                        class="bi bi-grid me-2"></i> Dashboard</a></li>
+                                        class="bi bi-grid me-2"></i> Dasbor</a></li>
                             {% if current_user.role == 'admin' %}
                             <li><a class="dropdown-item" href="{{ url_for('admin.manage_banners') }}"><i
-                                        class="bi bi-images me-2"></i> Manage Banners</a></li>
+                                        class="bi bi-images me-2"></i> Kelola Banner</a></li>
                             {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i
-                                        class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                                        class="bi bi-box-arrow-right me-2"></i> Keluar</a></li>
                         </ul>
                     </div>
                     {% else %}
