@@ -28,6 +28,9 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     csrf.init_app(app)
     limiter.init_app(app)
+    
+    from app.utils import init_cloudinary
+    init_cloudinary(app)
 
     login_manager.login_view = 'auth.login'
 
