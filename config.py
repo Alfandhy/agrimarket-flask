@@ -20,7 +20,8 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
     # Firebase Config
-    FIREBASE_CREDENTIALS_PATH = os.environ.get('FIREBASE_CREDENTIALS_PATH', os.path.join(basedir, 'firebase-credentials.json'))
+    raw_path = os.environ.get('FIREBASE_CREDENTIALS_PATH', 'firebase-credentials.json')
+    FIREBASE_CREDENTIALS_PATH = raw_path if os.path.isabs(raw_path) else os.path.join(basedir, raw_path)
 
     # ImgBB Config
     IMGBB_API_KEY = os.environ.get('IMGBB_API_KEY')
