@@ -1,15 +1,20 @@
 
 from flask import Flask, render_template, flash, redirect, url_for
 from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv() # Load env vars from .env if present
 
 from config import Config
-from app.extensions import db, login_manager, csrf, limiter
+from app.extensions import login_manager, csrf, limiter, init_firebase
 from app.models import User
 
 def create_app(config_class=Config):
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
+    
+    # Trust reverse proxy for correct client IP parsing
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    
     app.config.from_object(config_class)
     
     # Register global functions for templates
@@ -19,25 +24,24 @@ def create_app(config_class=Config):
             if not filename:
                 return None
             if filename.startswith('http'):
+                # Trik: Bypass blokir ISP (Internet Positif) menggunakan proxy gambar WordPress (Photon)
+                if 'i.ibb.co' in filename:
+                    return filename.replace('https://', 'https://i0.wp.com/')
                 return filename
             return url_for('static', filename='uploads/' + filename)
         return dict(get_image_url=get_image_url)
 
     # Initialize extensions
-    db.init_app(app)
+    init_firebase(app)
     login_manager.init_app(app)
     csrf.init_app(app)
     limiter.init_app(app)
     
-    from app.utils import init_cloudinary
-    init_cloudinary(app)
-
     login_manager.login_view = 'auth.login'
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Use session.get for SQLAlchemy 2.0 compatibility
-        return db.session.get(User, int(user_id))
+        return User.get_by_id(user_id)
 
     # Register blueprints
     from app.routes import auth, admin, product, main
@@ -65,26 +69,4 @@ def create_app(config_class=Config):
 
     return app
 
-# Memberikan akses langsung untuk gunicorn jika menggunakan 'app:app'
-from app.models import User, Category
-
-def seed_data(app):
-    try:
-        with app.app_context():
-            db.create_all()
-            if not User.query.filter_by(role='admin').first():
-                admin = User(username='admin', role='admin', whatsapp_number='6281234567890')
-                admin.set_password('admin123')
-                db.session.add(admin)
-            target_cats = ['Produk Pertanian', 'Komoditas Pertanian', 'Buah-Buahan', 'Sayur-Sayuran', 'Makanan']
-            for c_name in target_cats:
-                if not Category.query.filter_by(name=c_name).first():
-                    db.session.add(Category(name=c_name))
-            db.session.commit()
-    except Exception as e:
-        print(f"Warning: Seed data failed or already handled by another worker: {e}")
-        # Dont crash the app/worker just because seed/create_all failed
-        # Usually it means the DB is already set up or being set up by another worker.
-
 app = create_app()
-seed_data(app)

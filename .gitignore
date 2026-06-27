@@ -65,3 +65,9 @@ instance/
 
 # MacOS
 .DS_Store
+
+# Firebase secrets
+firebase-credentials.json
+
+# Uploads
+static/uploads/

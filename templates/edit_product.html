@@ -45,7 +45,7 @@
                         <div class="position-relative" style="width: 100px;">
                             <img src="{{ get_image_url(img.image_filename) }}"
                                 class="img-thumbnail w-100" style="height: 100px; object-fit: cover;">
-                            <button type="submit" formaction="{{ url_for('product.delete_product_image', img_id=img.id) }}"
+                            <button type="submit" formaction="{{ url_for('product.delete_product_image', product_id=product.id, img_id=img.id) }}"
                                 formmethod="POST"
                                 class="btn btn-danger btn-sm badge position-absolute top-0 end-0 rounded-circle p-1"
                                 style="transform: translate(30%, -30%);">x</button>

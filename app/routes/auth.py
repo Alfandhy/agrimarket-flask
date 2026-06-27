@@ -4,7 +4,7 @@ import re
 import uuid
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_user, login_required, logout_user, current_user
-from app.models import User, db
+from app.models import User
 from app.extensions import limiter
 
 bp = Blueprint('auth', __name__)
@@ -29,7 +29,7 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
+        user = User.get_by_username(username)
         if user and user.check_password(password):
             login_user(user)
             flash('Login berhasil!', 'success')
@@ -45,12 +45,8 @@ def logout():
     return redirect(url_for('auth.login'))
 
 @bp.route('/register', methods=['GET', 'POST']) 
+@limiter.limit("5 per minute")
 def register():
-    # Basic register (if needed, though not in original app.py but usually required)
-    # Original app.py used 'create_user' in admin. 
-    # Let's keep it simple as per original: ONLY ADMIN creates users?
-    # Wait, original app.py didn't have public register. 
-    # But files show 'register.html'. I will impl public register if it exists.
     if current_user.is_authenticated: return redirect(url_for('main.index'))
     if request.method == 'POST':
         username = request.form.get('username')
@@ -62,13 +58,12 @@ def register():
             flash(msg, 'warning')
             return render_template('register.html')
             
-        if User.query.filter_by(username=username).first():
+        if User.get_by_username(username):
             flash('Username sudah digunakan.', 'danger')
         else:
             new_user = User(username=username, role='penjual', whatsapp_number=format_whatsapp(wa))
             new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
+            new_user.save()
             flash('Registrasi berhasil! Silakan login.', 'success')
             return redirect(url_for('auth.login'))
             

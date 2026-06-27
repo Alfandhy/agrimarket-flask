@@ -4,8 +4,8 @@ import uuid
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from sqlalchemy.orm import joinedload
-from app.models import Product, Category, Banner, User, db
+from app.models import Product, Category, Banner, User
+from app import extensions
 from app.routes.auth import validate_password_strength, format_whatsapp # Reuse helpers
 from app.utils import upload_image, delete_image
 
@@ -16,29 +16,27 @@ def index():
     search_query = request.args.get('search')
     category_id = request.args.get('category')
     
-    banners = Banner.query.filter_by(is_active=True).all()
+    all_banners = Banner.get_all()
+    banners = [b for b in all_banners if b.is_active]
     
-    query = Product.query.options(
-        joinedload(Product.category), 
-        joinedload(Product.seller),
-        joinedload(Product.images)
-    )
+    all_products = Product.get_all()
     
     current_category = None
     if search_query:
-        query = query.filter(Product.name.contains(search_query) | Product.description.contains(search_query))
+        search_query = search_query.lower()
+        products = [p for p in all_products if search_query in p.name.lower() or search_query in p.description.lower()]
     elif category_id:
-        query = query.filter_by(category_id=category_id)
-        current_category = db.session.get(Category, category_id)
+        products = [p for p in all_products if p.category_id == category_id]
+        current_category = Category.get_by_id(category_id)
+    else:
+        products = all_products
         
-    products = query.all()
-    
     for p in products:
         p.main_image = p.images[0].image_filename if p.images else None
         
     return render_template('index.html', 
                          products=products, 
-                         categories=Category.query.all(), 
+                         categories=Category.get_all(), 
                          current_category=current_category, 
                          search_query=search_query,
                          banners=banners)
@@ -46,25 +44,24 @@ def index():
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    query = Product.query.options(
-        joinedload(Product.category), 
-        joinedload(Product.seller),
-        joinedload(Product.images)
-    )
+    all_products = Product.get_all()
     
     if current_user.role == 'admin':
-        products = query.all()
+        products = all_products
     else:
-        products = query.filter_by(seller_id=current_user.id).all()
+        products = [p for p in all_products if p.seller_id == current_user.id]
         
     for p in products:
         p.main_image = p.images[0].image_filename if p.images else None
         
     return render_template('dashboard.html', products=products)
 
-@bp.route('/seller/<int:user_id>')
+@bp.route('/seller/<string:user_id>')
 def seller_profile(user_id):
-    user = User.query.options(joinedload(User.products)).get_or_404(user_id)
+    user = User.get_by_id(user_id)
+    if not user: abort(404)
+    all_products = Product.get_all()
+    user.products = [p for p in all_products if p.seller_id == user.id]
     return render_template('seller_profile.html', user=user)
 
 @bp.route('/profile/edit', methods=['GET', 'POST'])
@@ -78,10 +75,6 @@ def edit_my_profile():
         if 'profile_image' in request.files:
             file = request.files['profile_image']
             if file and file.filename != '':
-                filename = secure_filename(file.filename)
-                ext = os.path.splitext(filename)[1]
-                
-                # Use helper for upload
                 new_filename = upload_image(file, folder="profiles")
                 if new_filename:
                      # Delete old image if exists
@@ -99,7 +92,7 @@ def edit_my_profile():
             user.set_password(new_pass)
             flash('Password diperbarui.', 'success')
 
-        db.session.commit()
+        user.save()
         flash('Profil berhasil diperbarui.', 'success')
         return redirect(url_for('main.dashboard'))
         
