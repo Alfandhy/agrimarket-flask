@@ -11,6 +11,16 @@ from app.utils import upload_image, delete_image
 
 bp = Blueprint('main', __name__)
 
+@bp.route('/debug-firebase')
+def debug_firebase():
+    from app import extensions
+    import os
+    from flask import current_app
+    cred_path = current_app.config.get('FIREBASE_CREDENTIALS_PATH')
+    exists = os.path.exists(cred_path) if cred_path else False
+    db_initialized = extensions.firebase_db is not None
+    return f"Cred Path: {cred_path} | Exists: {exists} | DB Init: {db_initialized}"
+
 @bp.route('/')
 def index():
     search_query = request.args.get('search')
